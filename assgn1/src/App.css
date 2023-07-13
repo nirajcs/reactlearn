@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+}
+
+.profile_card {
+  background-color: rgb(21, 116, 194);
+  margin: 10px;
+  padding: 10px;
+}
+
+h1{
+  color: white;
+}
