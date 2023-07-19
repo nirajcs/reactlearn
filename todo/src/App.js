@@ -8,6 +8,9 @@ function App() {
   let today = weeks[dayOfWeek]
   const [todo,setTodo] = useState('')
   const [todos,setTodos] = useState([])
+  const [editTodo, setEditTodo] = useState(null);
+  const [updatedTodoText, setUpdatedTodoText] = useState('');
+
 
   let updateTodo = (e)=>{
     setTodo(e.target.value)
@@ -31,6 +34,24 @@ function App() {
         return obj;
       });
     });
+  };
+
+  const editTask = (taskId) => {
+    const todoToEdit = todos.find(item => item.id === taskId);
+    setEditTodo(todoToEdit);
+    setUpdatedTodoText(todoToEdit.text);
+  };
+  
+  const updateTask = (taskId) => {
+    setTodos(prevTodos => {
+      return prevTodos.map(obj => {
+        if (obj.id === taskId) {
+          return { ...obj, text: updatedTodoText };
+        }
+        return obj;
+      });
+    });
+    setEditTodo(null);
   };
   
   let deleteTask = (taskId) =>{
@@ -64,25 +85,76 @@ function App() {
                   </div>
                 </form>
               </div>
-                {
-                  todos.map((item)=>{
-                    return(
+              {
+                todos.map((item) => {
+                  if (editTodo && editTodo.id === item.id) {
+                    return (
                       <div className="card todo-list m-2 p-2" key={item.id}>
                         <div className="todos d-flex justify-content-between">
                           <div className="input-group">
                             <div className="input-group-prepend">
                               <div className="input-group-text">
-                                <input className='m-0' type="checkbox" value={item.status} onChange={(e)=>{statusChange(item,e)}}/>
+                                <input
+                                  className='m-0'
+                                  type="checkbox"
+                                  value={item.status}
+                                  onChange={(e) => { statusChange(item, e) }}
+                                />
+                              </div>
+                            </div>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={updatedTodoText}
+                              onChange={(e) => setUpdatedTodoText(e.target.value)}
+                            />
+                          </div>
+                          <i
+                            className="fa-sharp fa-solid fa-check my-1 mx-2"
+                            style={{ color: '#331d2c' }}
+                            onClick={() => updateTask(item.id)}
+                          ></i>
+                          <i
+                            className="fa-sharp fa-solid fa-times my-1 mx-2"
+                            style={{ color: '#331d2c' }}
+                            onClick={() => setEditTodo(null)}
+                          ></i>
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="card todo-list m-2 p-2" key={item.id}>
+                        <div className="todos d-flex justify-content-between">
+                          <div className="input-group">
+                            <div className="input-group-prepend">
+                              <div className="input-group-text">
+                                <input
+                                  className='m-0'
+                                  type="checkbox"
+                                  value={item.status}
+                                  onChange={(e) => { statusChange(item, e) }}
+                                />
                               </div>
                             </div>
                             <p className='m-0'>{item.text}</p>
                           </div>
-                          <i onClick={()=>deleteTask(item.id)} className="fa-sharp fa-solid fa-trash" style={{ color: '#331d2c' }}></i>
+                          <i
+                            className="fa-solid fa-pen-to-square my-1 mx-2"
+                            onClick={() => editTask(item.id)}
+                          ></i>
+                          <i
+                            onClick={() => deleteTask(item.id)}
+                            className="fa-sharp fa-solid fa-trash my-1 mx-2"
+                            style={{ color: '#331d2c' }}
+                          ></i>
                         </div>
                       </div>
-                    )
-                  })
-                }
+                    );
+                  }
+                })
+              }
+
             </div>
           </div>
           <div className="col-md-6"> 
